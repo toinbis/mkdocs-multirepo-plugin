@@ -1,13 +1,14 @@
 import ast
 import asyncio
+import fnmatch
 import os
 import shutil
 import time
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union, Iterable
 
 from mkdocs.config import Config
-from mkdocs.structure.files import File, Files, _filter_paths, _sort_files
+from mkdocs.structure.files import File, Files, _sort_files  # _filter_paths
 from mkdocs.utils import yaml_load
 from slugify import slugify
 
@@ -20,6 +21,24 @@ from .util import (
     log,
     remove_parents,
 )
+
+
+def _filter_paths(basename: str, path: str, is_dir: bool,
+                  exclude: Iterable[str]) -> bool:
+    # warnings.warn(
+    #     "_filter_paths is not used since MkDocs 1.5 and will be removed soon"
+    # , DeprecationWarning
+    # )
+    for item in exclude:
+        # Items ending in '/' apply only to directories.
+        if item.endswith('/') and not is_dir:
+            continue
+        # Items starting with '/' apply to the whole path.
+        # In any other cases just the basename is used.
+        match = path if item.startswith('/') else basename
+        if fnmatch.fnmatch(match, item.strip('/')):
+            return True
+    return False
 
 
 def is_yaml_file(file: File) -> bool:
@@ -464,3 +483,5 @@ def get_files(config: Config, repo: DocsRepo) -> Files:
             )
 
     return Files(files)
+
+
