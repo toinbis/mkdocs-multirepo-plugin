@@ -7,14 +7,14 @@ from re import search
 from sys import platform, version_info
 from typing import Any, Dict
 
-from mkdocs.utils import warning_filter
+# from mkdocs.utils import warning_filter
 
 # used for getting Git version
 GitVersion = namedtuple("GitVersion", "major minor")
 LINUX_LIKE_PLATFORMS = ["linux", "linux2", "darwin"]
 
 log = logging.getLogger("mkdocs.plugins." + __name__)
-log.addFilter(warning_filter)
+# log.addFilter(warning_filter)
 
 
 class ImportDocsException(Exception):
